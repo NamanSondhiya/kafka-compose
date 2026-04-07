@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  kafka1:
+    image: confluentinc/cp-kafka:7.8.3
+    container_name: kafka1
+    hostname: kafka1
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+      - "19093:19093"
+    environment:
+      KAFKA_KRAFT_MODE: 'true'
+      CLUSTER_ID: 'p0NM4fBBRWezVBQtNHJ-kA'
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:9093,2@kafka2:9093,3@kafka3:9093
+      
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:19093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-dev.lexidevice.com:9092,INTERNAL://kafka1:19093
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_LOG_RETENTION_HOURS: 24
+      
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+
+      KAFKA_HEAP_OPTS: "-Xms1G -Xmx2G"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    
+    volumes:
+      - kafka1-data:/var/lib/kafka/data
+    networks:
+      - kafka-net
+  
+  kafka2:
+    image: confluentinc/cp-kafka:7.8.3
+    container_name: kafka2
+    hostname: kafka2
+    restart: unless-stopped
+    ports:
+      - "9093:9092"
+      - "29093:29093"
+    environment:
+      KAFKA_KRAFT_MODE: 'true'
+      CLUSTER_ID: 'p0NM4fBBRWezVBQtNHJ-kA'
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:9093,2@kafka2:9093,3@kafka3:9093
+      
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-dev.lexidevice.com:9093,INTERNAL://kafka2:29093
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_LOG_RETENTION_HOURS: 24
+
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+
+      KAFKA_HEAP_OPTS: "-Xms1G -Xmx2G"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    
+    volumes:
+      - kafka2-data:/var/lib/kafka/data
+    networks:
+      - kafka-net
+  
+  kafka3:
+    image: confluentinc/cp-kafka:7.8.3
+    container_name: kafka3
+    hostname: kafka3
+    restart: unless-stopped
+    ports:
+      - "9094:9092"
+      - "39093:39093"
+    environment:
+      KAFKA_KRAFT_MODE: 'true'
+      CLUSTER_ID: 'p0NM4fBBRWezVBQtNHJ-kA'
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:9093,2@kafka2:9093,3@kafka3:9093
+      
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:39093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-dev.lexidevice.com:9094,INTERNAL://kafka3:39093
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_LOG_RETENTION_HOURS: 24
+
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+
+      KAFKA_HEAP_OPTS: "-Xms1G -Xmx2G"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    
+    volumes:
+      - kafka3-data:/var/lib/kafka/data
+    networks:
+      - kafka-net
+
+volumes:
+  kafka1-data:
+  kafka2-data:
+  kafka3-data:
+
+networks:
+  kafka-net:
+    driver: bridge
